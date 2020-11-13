@@ -20,12 +20,19 @@ use Illuminate\Support\Facades\Route;
 // });
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
 });
 
-Route::get('/data-tables', function () {
-    return view('contents.data-tables');
+Route::group(['middleware' => ['auth','CekRole:admin,user']], function(){
+    Route::get('/data-tables', function () {
+        return view('contents.data-tables');
+    });
 });
+
+// Route::get('/data-tables', function () {
+//     return view('contents.data-tables');
+// });
+
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
