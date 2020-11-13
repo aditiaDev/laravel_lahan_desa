@@ -22,3 +22,6 @@ Route::get('/', function () {
 Route::get('/data-tables', function () {
     return view('contents.data-tables');
 });
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
