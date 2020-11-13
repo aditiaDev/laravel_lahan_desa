@@ -15,8 +15,12 @@ use Illuminate\Support\Facades\Route;
 
 
 
+// Route::get('/', function () {
+//     return view('contents.home');
+// });
+
 Route::get('/', function () {
-    return view('contents.home');
+    return view('welcome');
 });
 
 Route::get('/data-tables', function () {
