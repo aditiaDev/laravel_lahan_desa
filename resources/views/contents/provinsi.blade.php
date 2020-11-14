@@ -11,7 +11,7 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1>Data Tables</h1>
+              
             </div>
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
@@ -27,7 +27,7 @@
       <!-- Default box -->
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title">Data Tables</h3>
+          <h3 class="card-title">Data Provinsi</h3>
 
           <div class="card-tools">
             <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
@@ -48,15 +48,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    {{-- <tr>
-                      <td>Trident</td>
-                      <td>Internet
-                        Explorer 4.0
-                      </td>
-                      <td>Win 95+</td>
-                      <td> 4</td>
-                      <td>X</td>
-                    </tr> --}}
+ 
                     </tbody>
                 </table>
               </div>
@@ -88,7 +80,7 @@
     $('#tb_data').DataTable({
 
         ajax: {
-          url: "http://localhost:8000/master/provinsi/getprovinsidata",
+          url: SITEURL+"/master/provinsi/getprovinsidata",
           type: 'GET',
           // data:{
           //   _token: $('meta[name="csrf-token"]').attr('content')
