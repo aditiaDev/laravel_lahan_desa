@@ -17,3 +17,9 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+
+Route::get('/master/provinsi/getprovinsidata', 'ProvinsiController@getProvinsiData')->name('getprovinsidata');
+Route::get('/lahan/getprovinsidata', 'LahanController@getProvinsiData');
+Route::get('/lahan/getkabupatendata', 'LahanController@getKabupatenData');
+Route::get('/lahan/getkecamatandata', 'LahanController@getKecamatanData');

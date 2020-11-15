@@ -80,7 +80,7 @@
     $('#tb_data').DataTable({
 
         ajax: {
-          url: SITEURL+"/master/provinsi/getprovinsidata",
+          url: SITEURL+"/api/master/provinsi/getprovinsidata",
           type: 'GET',
           // data:{
           //   _token: $('meta[name="csrf-token"]').attr('content')

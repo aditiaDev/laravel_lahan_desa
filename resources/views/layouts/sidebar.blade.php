@@ -65,6 +65,15 @@
           @endif
 
           <li class="nav-item">
+            <a href="{{ route('lahan') }}"  class="nav-link {{Request::segment(1) == 'lahan' ? 'active' : '' }} ">
+              <i class="nav-icon fas fa-file-alt"></i>
+              <p>
+                Input Data Lahan
+              </p>
+            </a>
+          </li>
+
+          <li class="nav-item">
             <a href="{{ route('logout') }}" onclick="event.preventDefault();
             document.getElementById('logout-form').submit();" class="nav-link">
               <i class="nav-icon fas fa-sign-out-alt"></i>
