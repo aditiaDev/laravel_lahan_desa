@@ -23,5 +23,9 @@ Route::get('/master/provinsi/getprovinsidata', 'ProvinsiController@getProvinsiDa
 Route::get('/lahan/getprovinsidata', 'LahanController@getProvinsiData');
 Route::get('/lahan/getkabupatendata', 'LahanController@getKabupatenData');
 Route::get('/lahan/getkecamatandata', 'LahanController@getKecamatanData');
+Route::get('/lahan/getdesadata', 'LahanController@getDesaData');
 
 Route::post('/lahan/savelahan', 'LahanController@store')->name('savelahan');
+Route::get('/lahan/getlahandata', 'LahanController@getlahandata')->name('getlahandata');
+Route::get('/lahan/getdetaillahandata', 'LahanController@getdetaillahandata')->name('getdetaillahandata');
+

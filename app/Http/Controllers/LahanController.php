@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\model\Provinsi;
 use App\model\Kabupaten;
 use App\model\Kecamatan;
+use App\model\Desa;
 use App\model\Lahan;
 use App\model\Gambar_Lahan;
 use Illuminate\Support\Facades\DB;
@@ -24,6 +25,33 @@ class LahanController extends Controller
     public function index()
     {
         return view('contents.lahan');
+    }
+
+    public function datalahan(){
+        return view('contents.datalahan');
+    }
+
+    public function getlahandata(){
+        $userData = DB::select(DB::raw("SELECT A.id, E.`name` provinsi, D.`name` kabupaten, C.`name` kecamatan, B.`name` desa, A.luas, A.tampak_depan, A.lebar_jalan, A.jaringan_listrik
+                                FROM lahan A, Desa B, kecamatan C, kabupaten D, provinsi E
+                                WHERE A.desa=B.id
+                                AND B.kecamatan_id=C.id
+                                AND C.kabupaten_id=D.id
+                                AND D.provinsi_id=E.id"));
+        return json_encode(array('data'=>$userData));
+    }
+
+    public function getdetaillahandata(Request $request){
+        // dd($request->id_lahan);
+        $userData = DB::select(DB::raw("SELECT E.`name` provinsi, D.`name` kabupaten, C.`name` kecamatan, B.`name` desa, A.luas, 
+                                A.tampak_depan, A.lebar_jalan, A.jaringan_listrik, A.zona_lahan, A.lat, A.lng
+                                FROM lahan A, Desa B, kecamatan C, kabupaten D, provinsi E
+                                WHERE A.desa=B.id
+                                AND B.kecamatan_id=C.id
+                                AND C.kabupaten_id=D.id
+                                AND D.provinsi_id=E.id
+                                AND A.id='".$request->id_lahan."'"));
+        return json_encode(array('data'=>$userData));
     }
 
     public function getProvinsiData(Request $request){
@@ -58,6 +86,17 @@ class LahanController extends Controller
         // dd($userData);
     }
 
+    public function getDesaData(Request $request){
+        $cari = $request->term;
+        $id_kecamatan = $request->id_kecamatan;
+        $userData = Desa::where('name','like','%'.$cari.'%')
+                                ->where('kecamatan_id',$id_kecamatan)
+                                ->orderBy('name')
+                                ->get();
+        return json_encode(array('items'=>$userData));
+        // dd($userData);
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -78,20 +117,6 @@ class LahanController extends Controller
     {
 
         // dd($request);
-        // $validation = $request->validate([
-        //     'kecamatan' => ['required'],
-        //     'desa' => ['required'],
-        //     'lat' => ['required'],
-        //     'lng' => ['required'],
-        //     'luas' => ['required'],
-        //     'tampak_depan' => ['required'],
-        //     'lebar_jalan' => ['required'],
-        //     'jaringan_listrik' => ['required'],
-        //     'zona_lahan' => ['required'],
-        //     'photo' => ['required'],
-        //     // 'photo.*' => ['mimes:jpeg,png,jpg','max:2048']
-        // ]);
-
         $validation = Validator::make($request->all(), [
             'kecamatan' => 'required',
             'desa' => 'required|unique:lahan',
@@ -105,26 +130,7 @@ class LahanController extends Controller
             'photo' => 'required',
             'photo.*' => ['mimes:jpeg,png,jpg','max:2048']
         ]);
-
-        // $lahan = Lahan::create($request->except('photo'));
-        // dd($request->file('photo'));
-
-        // $lahan = new Lahan;
-        // $lahan->kecamatan_id = $request->kecamatan;
-        // $lahan->desa = $request->desa;
-        // $lahan->lat = $request->lat;
-        // $lahan->lng = $request->lng;
-        // $lahan->luas = $request->luas;
-        // $lahan->tampak_depan = $request->tampak_depan;
-        // $lahan->lebar_jalan = $request->lebar_jalan;
-        // $lahan->jaringan_listrik = $request->jaringan_listrik;
-        // $lahan->zona_lahan = $request->zona_lahan;
-        // $lahan->save();
-
-        // return response()->json([
-        //     "message" => "DATA HAVE BEEN SAVED"
-        // ], 201);
-        
+       
 
         if($validation->passes())
         {
@@ -140,11 +146,8 @@ class LahanController extends Controller
             $lahan->zona_lahan = $request->zona_lahan;
             $lahan->save();
 
-            // https://www.webslesson.info/2018/09/upload-image-in-laravel-using-ajax.html
             $image = $request->file('photo');
-            // $new_name = rand() . '.' . $image->getClientOriginalExtension();
-            // $gambar = $image->getClientOriginalExtension();
-            // $image->move(public_path('images'), $new_name);
+            
             $i = 0;
             foreach ($request->file('photo') as $file) {
                 $new_name = date('Ymd').rand() . '.' . $image[$i]->getClientOriginalExtension();
@@ -165,24 +168,14 @@ class LahanController extends Controller
             return response()->json([
                 'status'     => 'success',
                 'message'   => 'Data Have Been Saved',
-                // 'uploaded_image' => '<img src="/images/'.$new_name.'" class="img-thumbnail" width="300" />',
-                // 'class_name'  => 'alert-success'
             ]);
-            // foreach ($request->file('photo') as $file) {
-            //     $path = Storage::disk('public')->putFile('gambar_lahan', $file);
-            //     // $spacePhotos[] = [
-            //     //     'space_id' => $space->id,
-            //     //     'path' => $path
-            //     // ];
-            // }
+ 
         }
         else
         {
             return response()->json([
                 'status'     => 'error',
                 'message'   => $validation->errors()->all(),
-                // 'uploaded_image' => '',
-                // 'class_name'  => 'alert-danger'
             ]);
         }
 

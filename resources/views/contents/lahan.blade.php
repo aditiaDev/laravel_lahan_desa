@@ -18,7 +18,7 @@
       <!-- Default box -->
       <div class="card card-primary">
         <div class="card-header">
-          <h3 class="card-title">Data Lahan</h3>
+          <h3 class="card-title">Input Data Lahan</h3>
 
           <div class="card-tools">
             <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
@@ -52,7 +52,8 @@
                 <div class="form-group row">
                   <label  class="col-sm-3">Desa</label>
                   <div class="col-sm-9">
-                    <input type="text" class="form-control" name="desa" required>
+                    {{-- <input type="text" class="form-control" name="desa" required> --}}
+                    <select name="desa" id="desa" class="form-control" required></select>
                   </div>
                 </div>
                 <div class="form-group row">
@@ -151,39 +152,7 @@
       </div>
       <!-- /.card -->
 
-      <!-- Default box -->
-      <div class="card card-primary">
-        <div class="card-header">
-          <h3 class="card-title">Data Lahan</h3>
-
-          <div class="card-tools">
-            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-              <i class="fas fa-minus"></i></button>
-            <button type="button" class="btn btn-tool" data-card-widget="remove" data-toggle="tooltip" title="Remove">
-              <i class="fas fa-times"></i></button>
-          </div>
-        </div>
-        <div class="card-body">
-          <div class="row">
-              <div class="col-md-12">
-                <table id="tb_data" class="table table-bordered table-striped">
-                    <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Name</th>
-                      <th>Action</th>
-                    </tr>
-                    </thead>
-                    <tbody>
- 
-                    </tbody>
-                </table>
-              </div>
-          </div>
-        </div>
-        <!-- /.card-body -->
-      </div>
-      <!-- /.card -->
+      
 
     </section>
     <!-- /.content -->
@@ -291,6 +260,34 @@
         }
     });
 
+    $("#desa").select2({
+        // minimumInputLength: 2,
+        ajax: {
+            url: SITEURL+"/api/lahan/getdesadata",
+            dataType: 'json',
+            type: "GET",
+            quietMillis: 50,
+            data: function (params) {
+              var queryParameters = {
+                term: params.term,
+                id_kecamatan: $("#kecamatan").val()
+              }
+              return queryParameters;
+            },
+            processResults: function (data) {
+            
+            return {
+                results: $.map(data.items, function (item) {
+                    return {
+                        text: item.name,
+                        id: item.id
+                    }
+                })
+            };
+        }
+        }
+    });
+
     // $('#tb_data').DataTable({
 
     //     ajax: {
@@ -362,7 +359,12 @@
             alert(data.message);
           }else{
             alert(data.message);
-            location.reload();
+            // location.reload();
+            @if (Auth::user()->level == "admin")
+              window.location = "{{ route('datalahan') }}";
+            @else
+              location.reload();
+            @endif
           }
         },
         error: function (err) {

@@ -64,14 +64,38 @@
           </li>
           @endif
 
-          <li class="nav-item">
+          <li class="nav-item has-treeview menu-open">
+            <a href="#" class="nav-link {{Request::segment(1) == 'lahan' ? 'active' : '' }} ">
+              <i class="nav-icon fas fa-file-alt"></i>
+              <p>
+                Lahan Desa
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{{ route('inputlahan') }}" class="nav-link {{Request::segment(2) == 'inputlahan' ? 'active' : '' }} ">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Input Data Lahan</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ route('datalahan') }}" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Data Lahan</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          {{-- <li class="nav-item">
             <a href="{{ route('lahan') }}"  class="nav-link {{Request::segment(1) == 'lahan' ? 'active' : '' }} ">
               <i class="nav-icon fas fa-file-alt"></i>
               <p>
                 Input Data Lahan
               </p>
             </a>
-          </li>
+          </li> --}}
 
           <li class="nav-item">
             <a href="{{ route('logout') }}" onclick="event.preventDefault();
