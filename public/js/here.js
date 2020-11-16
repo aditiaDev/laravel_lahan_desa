@@ -1,12 +1,12 @@
-let platform = new H.service.Platform({
+var platform = new H.service.Platform({
     'apikey': window.hereApiKey
 });
-let marker;
+var marker;
 // Obtain the default map types from the platform object
-let defaultLayers = platform.createDefaultLayers();
+var defaultLayers = platform.createDefaultLayers();
 
 // Instantiate (and display) a map object:
-let map = new H.Map(
+var map = new H.Map(
         document.getElementById('mapContainer'),
         defaultLayers.raster.satellite.map,
         {
@@ -127,9 +127,9 @@ if (navigator.geolocation) {
             }, false);
         }
 
-        if (window.action == "submit") {
+        // if (window.action == "submit") {
             addDragableMarker(map, behavior);
-        }
+        // }
 
         // Browse location codespace
         let spaces = [];

@@ -14,7 +14,7 @@
   <!-- overlayScrollbars -->
   <link rel="stylesheet" href="{{asset('template/dist/css/adminlte.min.css')}}">
   <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-
+  <link rel="stylesheet" href="{{asset('loader/loader.css')}}">
   <!-- Scripts -->
   {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/js/all.min.js"></script> --}}
   {{-- <script src="https://js.api.here.com/v3/3.1/mapsjs-core.js" type="text/javascript" charset="utf-8"></script>
@@ -27,6 +27,9 @@
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 </head>
 <body class="hold-transition sidebar-mini">
+  <div class="before-loader" id="LOADER" style="display: none;">
+    <div class="loader5" ></div>
+  </div>
 <!-- Site wrapper -->
 <div class="wrapper">
   <!-- Navbar -->

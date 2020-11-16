@@ -27,7 +27,7 @@
               <i class="fas fa-times"></i></button>
           </div>
         </div>
-        <form class="form-horizontal">
+        <form class="form-horizontal" method="post"  id="FORM_SAVE" enctype="multipart/form-data">
           <div class="card-body">
             <div class="row">
               <div class="col-5">
@@ -52,56 +52,86 @@
                 <div class="form-group row">
                   <label  class="col-sm-3">Desa</label>
                   <div class="col-sm-9">
-                    <input type="text" class="form-control" name="desa">
+                    <input type="text" class="form-control" name="desa" required>
                   </div>
                 </div>
                 <div class="form-group row">
                   <label  class="col-sm-3">Latitude</label>
                   <div class="col-sm-9">
-                    <input type="text" class="form-control" name="lat" id="lat">
+                    <input type="text" class="form-control" name="lat" id="lat" required>
                   </div>
                 </div>
                 <div class="form-group row">
                   <label  class="col-sm-3">Longitude</label>
                   <div class="col-sm-9">
-                    <input type="text" class="form-control" name="lng" id="lng">
+                    <input type="text" class="form-control" name="lng" id="lng" required>
                   </div>
                 </div>
                 <div class="form-group row">
                   <label  class="col-sm-3">Luas</label>
                   <div class="col-sm-9">
-                    <input type="text" class="form-control" name="luas">
+                    <input type="text" class="form-control" name="luas" required>
                   </div>
                 </div>
                 <div class="form-group row">
                   <label  class="col-sm-3">Tampak Depan</label>
                   <div class="col-sm-9">
-                    <input type="text" class="form-control" name="tampak_depan">
+                    <input type="text" class="form-control" name="tampak_depan" required>
                   </div>
                 </div>
                 <div class="form-group row">
                   <label  class="col-sm-3">Lebar Jalan</label>
                   <div class="col-sm-9">
-                    <input type="text" class="form-control" name="lebar_jalan">
+                    <input type="text" class="form-control" name="lebar_jalan" required>
                   </div>
                 </div>
                 <div class="form-group row">
                   <label  class="col-sm-3">Jaringan Listrik</label>
                   <div class="col-sm-9">
-                    <input type="text" class="form-control" name="jaringan_listrik">
+                    <input type="text" class="form-control" name="jaringan_listrik" required>
                   </div>
                 </div>
                 <div class="form-group row">
                   <label  class="col-sm-3">Zona Lahan</label>
                   <div class="col-sm-9">
-                    <input type="text" class="form-control" name="zona_lahan">
+                    <input type="text" class="form-control" name="zona_lahan" required>
                   </div>
                 </div>
-                
+                <div class="form-group increment">
+                  
+                  <div class="row">
+                    <div class="col-3"><label>Photo</label></div>
+                    <div class="col-9">
+                      <div class="input-group">
+                        <input type="file" name="photo[]" class="form-control">
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-outline-primary btn-add"><i class="fas fa-plus-square"></i></button>
+                        </div>
+                    </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="clone invisible">
+                  <div class="row">
+                    <div class="col-3"></div>
+                    <div class="col-9">
+                      <div class="input-group mt-2">
+                        <input type="file" name="photo[]" class="form-control">
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-outline-danger btn-remove"><i class="fas fa-minus-square"></i></button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
               </div>
+
+              
               <div class="col-7">
                 <div id="here-maps">
-                  <input size="40" id="place" style="/*position:absolute;z-index: 100;*/" type="text" placeholder="Search a Place...">
+                  <input size="40" id="place" style="position:absolute;z-index: 100;" type="text" placeholder="Search a Place...">
                   <div style="height: 400px" id="mapContainer"></div>
                 </div>
               </div>
@@ -110,8 +140,10 @@
           </div>
           <!-- /.card-body -->
           <div class="card-footer">
-            <button type="submit" class="btn btn-info">Sign in</button>
-            <button type="submit" class="btn btn-default">Cancel</button>
+            <center>
+              <button type="submit" id="save_data" class="btn btn-info"><i class="fas fa-save"></i> SAVE</button>
+              <button type="button" id="reset" class="btn btn-default">CANCEL</button>
+            </center>
           </div>
           <!-- /.card-footer -->
         </form>
@@ -278,6 +310,79 @@
     //     order: [[0, 'asc']]
     // });
 
+    // $("#save_data").click(function(){
+    //   let frmData = $("#FORM_SAVE").serialize();
+    //   $.ajax({
+    //     url: SITEURL+"/api/lahan/savelahan",
+    //     dataType: 'JSON',
+    //     type: 'POST',
+    //     data: frmData,
+    //     success: function(data){
+    //       console.log(data)
+    //       alert(data.message);
+    //     },
+    //     error: function (err) {
+    //       if (err.status == 422) { // when status code is 422, it's a validation issue
+    //           console.log(err.responseJSON);
+    //           alert(err.responseJSON.message);
+
+    //           // you can loop through the errors object and show it to the user
+    //           console.warn(err.responseJSON.errors);
+    //           // display errors on each form field
+    //           $.each(err.responseJSON.errors, function (i, error) {
+    //               var el = $(document).find('[name="'+i+'"]');
+    //               el.after($('<span style="color: red;">'+error[0]+'</span>'));
+    //           });
+    //       }
+    //     }
+    //   })
+    // })
+
+
+    $("#FORM_SAVE").on('submit', function(event){
+      event.preventDefault();
+      let frmData = new FormData(this);
+      $.ajax({
+        url: SITEURL+"/api/lahan/savelahan",
+        type: "POST",
+        data: frmData,
+        beforeSend: function(){
+          $("#LOADER").show();
+        },
+        complete: function(){
+          $("#LOADER").hide();
+        },
+        processData : false,
+        cache: false,
+        contentType : false,
+        success: function(data){
+          console.log(data)
+          // alert(data.message);
+          if(data.status == 'error'){
+            alert(data.message);
+          }else{
+            alert(data.message);
+            location.reload();
+          }
+        },
+        error: function (err) {
+          if (err.status == 422) { // when status code is 422, it's a validation issue
+              console.log(err.responseJSON);
+              alert(err.responseJSON.message);
+
+              // you can loop through the errors object and show it to the user
+              console.warn(err.responseJSON.errors);
+              // display errors on each form field
+              $.each(err.responseJSON.errors, function (i, error) {
+                  var el = $(document).find('[name="'+i+'"]');
+                  el.after($('<span style="color: red;">'+error[0]+'</span>'));
+              });
+          }
+        }
+      })
+      // alert('sdf')
+    })
+
   });
 </script>
 <script>
@@ -331,5 +436,8 @@ function placeAC(query, callback) {
   return callback(places);
   }, alert)
 }
+</script>
+<script>
+
 </script>
 @endpush
