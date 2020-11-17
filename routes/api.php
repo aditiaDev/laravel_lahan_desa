@@ -21,6 +21,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::get('/master/provinsi/getprovinsidata', 'ProvinsiController@getProvinsiData')->name('getprovinsidata');
 Route::get('/lahan/getprovinsidata', 'LahanController@getProvinsiData');
+Route::get('/master/kabupaten/getkabupatendata', 'KabupatenController@getKabupatenData')->name('getkabupatendata');
+Route::get('/master/kecamatan/getkecamatandata', 'KecamatanController@getKecamatanData')->name('getkecamatandata');
+Route::get('/master/desa/getdesadata', 'DesaController@getDesaData')->name('getdesadata');
 Route::get('/lahan/getkabupatendata', 'LahanController@getKabupatenData');
 Route::get('/lahan/getkecamatandata', 'LahanController@getKecamatanData');
 Route::get('/lahan/getdesadata', 'LahanController@getDesaData');

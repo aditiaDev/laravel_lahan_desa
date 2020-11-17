@@ -134,12 +134,7 @@
               </div>
             </div>
           </div>
-          <div class="row">
-            <div class="col-6">
-              <div class="form-group">
-                <img src="{{ URL::to('/') }}/images/20201116784385964.jpg" alt="">
-              </div>
-            </div>
+          <div class="row" id="tampil_gambar">
           </div>
           <div class="row">
             <div class="col-12">
@@ -289,23 +284,29 @@
       },
       success: function(data){
         let dapet = $.parseJSON(data);
-        data = dapet['data'][0];
-        console.log(data)
-        $("#provinsi").val(data.provinsi);
-        $("#kabupaten").val(data.kabupaten);
-        $("#kecamatan").val(data.kecamatan);
-        $("#desa").val(data.desa);
-        $("#luas").val(data.luas);
-        $("#tampak_depan").val(data.tampak_depan);
-        $("#lebar_jalan").val(data.lebar_jalan);
-        $("#jaringan_listrik").val(data.jaringan_listrik);
-        $("#zona_lahan").val(data.zona_lahan);
-        $("#position").val(data.lat+','+data.lng);
+        data = dapet['data'];
+        // console.log(data)
+        $("#provinsi").val(data[0].provinsi);
+        $("#kabupaten").val(data[0].kabupaten);
+        $("#kecamatan").val(data[0].kecamatan);
+        $("#desa").val(data[0].desa);
+        $("#luas").val(data[0].luas);
+        $("#tampak_depan").val(data[0].tampak_depan);
+        $("#lebar_jalan").val(data[0].lebar_jalan);
+        $("#jaringan_listrik").val(data[0].jaringan_listrik);
+        $("#zona_lahan").val(data[0].zona_lahan);
+        $("#position").val(data[0].lat+','+data[0].lng);
         // $("#lat").val(data.lat);
         // $("#lng").val(data.lng);
-        map.setCenter({lat:data.lat, lng:data.lng});
+        map.setCenter({lat:data[0].lat, lng:data[0].lng});
         map.setZoom(14);
-        marker.setGeometry( {lat:data.lat, lng:data.lng} );
+        marker.setGeometry( {lat:data[0].lat, lng:data[0].lng} );
+
+        $("#tampil_gambar").html('')
+        $.each(data, function(index,array){
+          console.log(array['photo'])
+          $("#tampil_gambar").append('<div class="col-6"><div class="form-group"><img src="{{ URL::to('/') }}/images/'+array['photo']+'" alt="" style="width:100%"></div></div>')
+        })
         
       }
     })

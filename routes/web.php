@@ -31,6 +31,9 @@ Route::group(['middleware' => ['auth']], function(){
     Route::get('/home', 'HomeController@index')->name('home');
 
     Route::get('/master/provinsi', 'ProvinsiController@index')->name('provinsi')->middleware('CekRole:admin');
+    Route::get('/master/kabupaten', 'KabupatenController@index')->name('kabupaten')->middleware('CekRole:admin');
+    Route::get('/master/kecamatan', 'KecamatanController@index')->name('kecamatan')->middleware('CekRole:admin');
+    Route::get('/master/desa', 'DesaController@index')->name('desa')->middleware('CekRole:admin');
     // Route::get('/master/provinsi/getprovinsidata', 'ProvinsiController@getProvinsiData')->name('getprovinsidata');
     Route::get('/lahan/inputlahan', 'LahanController@index')->name('inputlahan');
     Route::get('/lahan/datalahan', 'LahanController@datalahan')->name('datalahan');

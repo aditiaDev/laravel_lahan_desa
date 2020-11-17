@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\model\Provinsi;
+use App\model\provinsi;
 use Illuminate\Http\Request;
 
 class ProvinsiController extends Controller
@@ -18,7 +18,7 @@ class ProvinsiController extends Controller
     }
 
     public function getProvinsiData(){
-        $userData = Provinsi::get();
+        $userData = provinsi::get();
         return json_encode(array('data'=>$userData));
     }
 

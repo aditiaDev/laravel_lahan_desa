@@ -49,15 +49,21 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="#" class="nav-link">
+                <a href="{{ route('kabupaten') }}" class="nav-link  {{Request::segment(2) == 'kabupaten' ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Data Kabupaten</p>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="#" class="nav-link">
+                <a href="{{ route('kecamatan') }}" class="nav-link {{Request::segment(2) == 'kecamatan' ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Data Kecamatan</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ route('desa') }}" class="nav-link  {{Request::segment(2) == 'desa' ? 'active' : '' }}">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Data Desa</p>
                 </a>
               </li>
             </ul>
