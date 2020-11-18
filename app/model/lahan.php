@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class lahan extends Model
 {
     protected $table = 'lahan';
-
+    // protected $dateFormat = 'd-M-Y';
     public function photos()
     {
         return $this->hasMany(gambar_lahan::class, 'lahan_id', 'id');
@@ -27,6 +27,9 @@ class lahan extends Model
         'tampak_depan',
         'lebar_jalan',
         'jaringan_listrik',
-        'zona_lahan',
+        'keterangan',
+        'date',
+        'harga',
+        'tim'
     ];
 }

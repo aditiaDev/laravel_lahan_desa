@@ -3,6 +3,7 @@
 <link rel="stylesheet" href="{{asset('template/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css')}}">
 <link rel="stylesheet" href="{{asset('template/plugins/datatables-responsive/css/responsive.bootstrap4.min.css')}}">
 <link rel="stylesheet" href="{{asset('template/plugins/select2/css/select2.min.css')}}">
+<link rel="stylesheet" href="{{asset('template/plugins/datepicker/datepicker3.css')}}">
 
 <script src="https://js.api.here.com/v3/3.1/mapsjs-core.js" type="text/javascript" charset="utf-8"></script>
 <script src="https://js.api.here.com/v3/3.1/mapsjs-service.js" type="text/javascript" charset="utf-8"></script>
@@ -57,6 +58,12 @@
                   </div>
                 </div>
                 <div class="form-group row">
+                  <label  class="col-sm-3">Date</label>
+                  <div class="col-sm-9">
+                    <input type="text" class="form-control datepicker" name="date" id="date" required>
+                  </div>
+                </div>
+                <div class="form-group row">
                   <label  class="col-sm-3">Latitude</label>
                   <div class="col-sm-9">
                     <input type="text" class="form-control" name="lat" id="lat" required>
@@ -72,6 +79,12 @@
                   <label  class="col-sm-3">Luas</label>
                   <div class="col-sm-9">
                     <input type="text" class="form-control" name="luas" required>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label  class="col-sm-3">Harga</label>
+                  <div class="col-sm-9">
+                    <input type="text" class="form-control" onkeyup="number_format('harga')" name="harga" id="harga" required>
                   </div>
                 </div>
                 <div class="form-group row">
@@ -92,10 +105,18 @@
                     <input type="text" class="form-control" name="jaringan_listrik" required>
                   </div>
                 </div>
+                
                 <div class="form-group row">
-                  <label  class="col-sm-3">Zona Lahan</label>
+                  <label  class="col-sm-3">Tim</label>
                   <div class="col-sm-9">
-                    <input type="text" class="form-control" name="zona_lahan" required>
+                    <input type="text" class="form-control" name="tim" required>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label  class="col-sm-3">Keterangan</label>
+                  <div class="col-sm-9">
+                    {{-- <input type="text" class="form-control" name="Keterangan" required> --}}
+                    <textarea name="keterangan" id="keterangan" rows="4" class="form-control"></textarea>
                   </div>
                 </div>
                 <div class="form-group increment">
@@ -165,9 +186,15 @@
 <script src="{{asset('template/plugins/datatables/jquery.dataTables.js')}}"></script>
 <script src="{{asset('template/plugins/datatables-bs4/js/dataTables.bootstrap4.js')}}"></script>
 <script src="{{asset('template/plugins/select2/js/select2.full.min.js')}}"></script>
+<script src="{{asset('template/plugins/datepicker/bootstrap-datepicker.js')}}"></script>
 <script>
   $(function () {
     // $(".select2").select2();
+
+    $('.datepicker').datepicker({
+      autoclose: true,
+      format: 'dd-M-yyyy'
+    });
 
     var SITEURL = '{{URL::to('')}}';
     $.ajaxSetup({
@@ -440,6 +467,54 @@ function placeAC(query, callback) {
 }
 </script>
 <script>
+  // function number_format(id){
+  //     var rupiah = document.getElementById(id);
+  //     rupiah.addEventListener("keyup", function(e) {
+  //         rupiah.value = formatCurrency(this.value, "");
+  //     });
+  // }
 
+  // function formatCurrency(angka, prefix) {
+  //     var number_string = angka.replace(/[^,\d]/g, '').toString(),
+  //     split           = number_string.split(','),
+  //     sisa            = split[0].length % 3,
+  //     rupiah          = split[0].substr(0, sisa),
+  //     ribuan          = split[0].substr(sisa).match(/\d{3}/gi);
+    
+  //     if(ribuan){
+  //         separator = sisa ? '.' : '';
+  //         rupiah += separator + ribuan.join('.');
+  //     }
+    
+  //     rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+  //     return prefix == undefined ? rupiah : (rupiah ? '' + rupiah : '');
+  // }
+
+  function number_format(id){
+      var rupiah = document.getElementById(id);
+      rupiah.addEventListener("keyup", function(e) {
+          // tambahkan 'Rp.' pada saat form di ketik
+          // gunakan fungsi formatCurrency() untuk mengubah angka yang di ketik menjadi format angka
+          rupiah.value = formatCurrency(this.value, "");
+      });
+  }
+
+  /* Fungsi formatCurrency */
+  function formatCurrency(angka, prefix) {
+      var number_string = angka.replace(/[^.\d]/g, '').toString(),
+      split           = number_string.split('.'),
+      sisa            = split[0].length % 3,
+      rupiah          = split[0].substr(0, sisa),
+      ribuan          = split[0].substr(sisa).match(/\d{3}/gi);
+    
+      // tambahkan koma jika yang di input sudah menjadi angka ribuan
+      if(ribuan){
+          separator = sisa ? ',' : '';
+          rupiah += separator + ribuan.join(',');
+      }
+    
+      rupiah = split[1] != undefined ? rupiah + '.' + split[1] : rupiah;
+      return prefix == undefined ? rupiah : (rupiah ? '' + rupiah : '');
+  }
 </script>
 @endpush

@@ -39,7 +39,7 @@
         </div>
         <div class="card-body">
           <div class="row">
-            <div class="col-4">
+            <div class="col-3">
               <div class="form-group">
                 <label>Provinsi</label>
                 <select name="provinsi" id="provinsi" class="form-control"></select>
@@ -51,7 +51,7 @@
                 <select name="kabupaten" id="kabupaten" class="form-control"></select>
               </div>
             </div>
-            <div class="col-4">
+            <div class="col-3">
               <div class="form-group">
                 <label>Kecamatan</label>
                 <select name="kecamatan" id="kecamatan" class="form-control"></select>

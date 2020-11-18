@@ -85,14 +85,39 @@
                   <p>Input Data Lahan</p>
                 </a>
               </li>
+              @if (Auth::user()->level == "admin")
               <li class="nav-item">
-                <a href="{{ route('datalahan') }}" class="nav-link">
+                <a href="{{ route('datalahan') }}" class="nav-link {{Request::segment(2) == 'datalahan' ? 'active' : '' }}">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Data Lahan</p>
                 </a>
               </li>
+              @endif
+              
             </ul>
           </li>
+
+          @if (Auth::user()->level == "admin")
+          <li class="nav-item">
+            <a href="#"  class="nav-link {{Request::segment(1) == 'user' ? 'active' : '' }} ">
+              <i class="nav-icon fas fa-users"></i>
+              <p>
+                Data Users
+              </p>
+            </a>
+          </li>
+          @endif
+          
+          @if (Auth::user()->level == "admin")
+          <li class="nav-item">
+            <a href="#"  class="nav-link {{Request::segment(1) == 'report' ? 'active' : '' }} ">
+              <i class="nav-icon fas fa-file-pdf"></i>
+              <p>
+                Report
+              </p>
+            </a>
+          </li>
+          @endif
 
           {{-- <li class="nav-item">
             <a href="{{ route('lahan') }}"  class="nav-link {{Request::segment(1) == 'lahan' ? 'active' : '' }} ">

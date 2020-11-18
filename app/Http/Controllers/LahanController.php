@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\model\desa;
+use App\model\lahan;
 use App\model\provinsi;
 use App\model\kabupaten;
 use App\model\kecamatan;
-use App\model\desa;
-use App\model\lahan;
 use App\model\gambar_lahan;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
@@ -32,7 +34,8 @@ class LahanController extends Controller
     }
 
     public function getlahandata(){
-        $userData = DB::select(DB::raw("SELECT A.id, E.`name` provinsi, D.`name` kabupaten, C.`name` kecamatan, B.`name` desa, A.luas, A.tampak_depan, A.lebar_jalan, A.jaringan_listrik
+        $userData = DB::select(DB::raw("SELECT A.id, E.`name` provinsi, D.`name` kabupaten, C.`name` kecamatan, 
+                                B.`name` desa, A.luas, A.tampak_depan, A.lebar_jalan, A.jaringan_listrik, A.status
                                 FROM lahan A, desa B, kecamatan C, kabupaten D, provinsi E
                                 WHERE A.desa=B.id
                                 AND B.kecamatan_id=C.id
@@ -44,7 +47,7 @@ class LahanController extends Controller
     public function getdetaillahandata(Request $request){
         // dd($request->id_lahan);
         // $userData = DB::select(DB::raw("SELECT E.`name` provinsi, D.`name` kabupaten, C.`name` kecamatan, B.`name` desa, A.luas, 
-        //                         A.tampak_depan, A.lebar_jalan, A.jaringan_listrik, A.zona_lahan, A.lat, A.lng
+        //                         A.tampak_depan, A.lebar_jalan, A.jaringan_listrik, A.keterangan, A.lat, A.lng
         //                         FROM lahan A, desa B, kecamatan C, kabupaten D, provinsi E
         //                         WHERE A.desa=B.id
         //                         AND B.kecamatan_id=C.id
@@ -52,7 +55,7 @@ class LahanController extends Controller
         //                         AND D.provinsi_id=E.id
         //                         AND A.id='".$request->id_lahan."'"));
         $userData = DB::select(DB::raw("SELECT E.`name` provinsi, D.`name` kabupaten, C.`name` kecamatan, B.`name` desa, A.luas, 
-                                A.tampak_depan, A.lebar_jalan, A.jaringan_listrik, A.zona_lahan, A.lat, A.lng, F.photo
+                                A.tampak_depan, A.lebar_jalan, A.jaringan_listrik, A.keterangan, A.lat, A.lng, F.photo, DATE_FORMAT(A.date, '%d-%b-%Y') as date, A.harga, A.tim
                                 FROM lahan A, desa B, kecamatan C, kabupaten D, provinsi E, gambar_lahan F
                                 WHERE A.desa=B.id
                                 AND B.kecamatan_id=C.id
@@ -68,30 +71,71 @@ class LahanController extends Controller
         $cari = $request->term;
         // $data = DB::table('provinsi')->select('id', 'name')->get();
         // return response()->json($data);
-        $userData = provinsi::where('name','like','%'.$cari.'%')->orderBy('name')->get();
-        return json_encode(array('items'=>$userData));
+        $userDatas = provinsi::where('name','like','%'.$cari.'%')->orderBy('name')->get();
+
+        $response = array();
+        $response[] = array(
+            "id"=>'',
+            "name"=>'ALL'
+        );
+        foreach($userDatas as $userData){
+            $response[] = array(
+                "id"=>$userData->id,
+                "name"=>$userData->name
+            );
+        }
+
+        return json_encode(array('items'=>$response));
+
+        // return json_encode(array('items'=>$userData));
         // dd($userData);
     }
 
     public function getkabupatenData(Request $request){
         $cari = $request->term;
         $id_provinsi = $request->id_provinsi;
-        $userData = kabupaten::where('name','like','%'.$cari.'%')
-                                ->where('provinsi_id',$id_provinsi)
+        $userDatas = kabupaten::where('name','like','%'.$cari.'%')
+                                ->where('provinsi_id','like','%'.$id_provinsi.'%')
                                 ->orderBy('name')
                                 ->get();
-        return json_encode(array('items'=>$userData));
+        // return json_encode(array('items'=>$userData));
+
+        $response = array();
+        $response[] = array(
+            "id"=>'',
+            "name"=>'ALL'
+        );
+        foreach($userDatas as $userData){
+            $response[] = array(
+                "id"=>$userData->id,
+                "name"=>$userData->name
+            );
+        }
+        return json_encode(array('items'=>$response));
         // dd($userData);
     }
 
     public function getkecamatanData(Request $request){
         $cari = $request->term;
         $id_kabupaten = $request->id_kabupaten;
-        $userData = kecamatan::where('name','like','%'.$cari.'%')
-                                ->where('kabupaten_id',$id_kabupaten)
+        $userDatas = kecamatan::where('name','like','%'.$cari.'%')
+                                ->where('kabupaten_id','like','%'.$id_kabupaten.'%')
                                 ->orderBy('name')
                                 ->get();
-        return json_encode(array('items'=>$userData));
+        // return json_encode(array('items'=>$userData));
+
+        $response = array();
+        $response[] = array(
+            "id"=>'',
+            "name"=>'ALL'
+        );
+        foreach($userDatas as $userData){
+            $response[] = array(
+                "id"=>$userData->id,
+                "name"=>$userData->name
+            );
+        }
+        return json_encode(array('items'=>$response));
         // dd($userData);
     }
 
@@ -122,6 +166,7 @@ class LahanController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+
     public function store(Request $request)
     {
 
@@ -135,7 +180,10 @@ class LahanController extends Controller
             'tampak_depan' => 'required',
             'lebar_jalan' => 'required',
             'jaringan_listrik' => 'required',
-            'zona_lahan' => 'required',
+            'keterangan' => 'required',
+            'date' => 'required',
+            'harga' => 'required',
+            'tim' => 'required',
             'photo' => 'required',
             'photo.*' => ['mimes:jpeg,png,jpg','max:2048']
         ]);
@@ -143,6 +191,9 @@ class LahanController extends Controller
 
         if($validation->passes())
         {
+            $now = date('d-M-Y'); //Fomat Date and time
+            $now = $request->date;
+
             $lahan = new lahan;
             $lahan->kecamatan_id = $request->kecamatan;
             $lahan->desa = $request->desa;
@@ -152,7 +203,12 @@ class LahanController extends Controller
             $lahan->tampak_depan = $request->tampak_depan;
             $lahan->lebar_jalan = $request->lebar_jalan;
             $lahan->jaringan_listrik = $request->jaringan_listrik;
-            $lahan->zona_lahan = $request->zona_lahan;
+            $lahan->keterangan = $request->keterangan;
+            $lahan->tim = $request->tim;
+            $lahan->status = 'under_verification';
+            $lahan->date = Carbon::parse($request->date)->format('Y-m-d');
+            $lahan->harga = str_replace(',', '',$request->harga);
+            $lahan->user_id = Auth::user()->id;
             $lahan->save();
 
             $image = $request->file('photo');

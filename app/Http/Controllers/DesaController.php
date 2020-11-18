@@ -19,7 +19,7 @@ class DesaController extends Controller
 
     public function getDesaData(Request $request){
         $id_kecamatan = $request->id_kecamatan;
-        $userData = desa::where('kecamatan_id',$id_kecamatan)
+        $userData = desa::where('kecamatan_id','like','%'.$id_kecamatan.'%')
                                 ->orderBy('name')
                                 ->get();
         return json_encode(array('data'=>$userData));
