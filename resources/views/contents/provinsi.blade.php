@@ -91,7 +91,7 @@
                 {data: 'name', name: 'name', orderable: true,searchable: true},
                 { data: "id", 
                   "render" : function(data){
-                    return '<a href="#" target="_blank"><button type="button" class="btn btn-warning btn-sm"><i class="fas fa-pencil-alt"></i></button></a> '+
+                    return '<!--<a href="#" target="_blank"><button type="button" class="btn btn-warning btn-sm"><i class="fas fa-pencil-alt"></i></button></a>--> '+
                             '<a href="#" target="_blank"><button type="button" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></a>'
                   }
                 },

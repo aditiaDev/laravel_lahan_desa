@@ -99,7 +99,7 @@
 
           @if (Auth::user()->level == "admin")
           <li class="nav-item">
-            <a href="#"  class="nav-link {{Request::segment(1) == 'user' ? 'active' : '' }} ">
+            <a href="{{ route('data_user') }}"  class="nav-link {{Request::segment(1) == 'user' ? 'active' : '' }} ">
               <i class="nav-icon fas fa-users"></i>
               <p>
                 Data Users
@@ -108,7 +108,7 @@
           </li>
           @endif
           
-          @if (Auth::user()->level == "admin")
+          {{-- @if (Auth::user()->level == "admin")
           <li class="nav-item">
             <a href="#"  class="nav-link {{Request::segment(1) == 'report' ? 'active' : '' }} ">
               <i class="nav-icon fas fa-file-pdf"></i>
@@ -117,7 +117,7 @@
               </p>
             </a>
           </li>
-          @endif
+          @endif --}}
 
           {{-- <li class="nav-item">
             <a href="{{ route('lahan') }}"  class="nav-link {{Request::segment(1) == 'lahan' ? 'active' : '' }} ">

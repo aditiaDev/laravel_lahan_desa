@@ -8,10 +8,13 @@ use App\model\provinsi;
 use App\model\kabupaten;
 use App\model\kecamatan;
 use App\model\gambar_lahan;
+use App\Exports\LahanExport;
+use App\Exports\LahanReport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
@@ -33,14 +36,32 @@ class LahanController extends Controller
         return view('contents.datalahan');
     }
 
-    public function getlahandata(){
+    public function export_excel(Request $request){
+        $provinsi_id = ($request->provinsi_id) ? null : '';
+        $kabupaten_id = ($request->kabupaten_id) ? null : '';
+        $kecamatan_id = ($request->kecamatan_id) ? null : '';
+        $status = $request->status;
+        $lahan_report = new LahanReport($provinsi_id, $kabupaten_id, $kecamatan_id, $status);
+        return ($lahan_report)->download('lahan.xlsx');
+    }
+
+    public function getlahandata(Request $request){
+        $provinsi_id = $request->provinsi_id;
+        $kabupaten_id = $request->kabupaten_id;
+        $kecamatan_id = $request->kecamatan_id;
+        $status = $request->status;
+
         $userData = DB::select(DB::raw("SELECT A.id, E.`name` provinsi, D.`name` kabupaten, C.`name` kecamatan, 
                                 B.`name` desa, A.luas, A.tampak_depan, A.lebar_jalan, A.jaringan_listrik, A.status
                                 FROM lahan A, desa B, kecamatan C, kabupaten D, provinsi E
                                 WHERE A.desa=B.id
                                 AND B.kecamatan_id=C.id
                                 AND C.kabupaten_id=D.id
-                                AND D.provinsi_id=E.id"));
+                                AND D.provinsi_id=E.id
+                                AND E.id LIKE '%".$provinsi_id."%'
+                                AND D.id LIKE '%".$kabupaten_id."%'
+                                AND C.id LIKE '%".$kecamatan_id."%'
+                                AND A.`status` LIKE '%".$status."%'"));
         return json_encode(array('data'=>$userData));
     }
 
@@ -56,13 +77,13 @@ class LahanController extends Controller
         //                         AND A.id='".$request->id_lahan."'"));
         $userData = DB::select(DB::raw("SELECT E.`name` provinsi, D.`name` kabupaten, C.`name` kecamatan, B.`name` desa, A.luas, 
                                 A.tampak_depan, A.lebar_jalan, A.jaringan_listrik, A.keterangan, A.lat, A.lng, F.photo, DATE_FORMAT(A.date, '%d-%b-%Y') as date, A.harga, A.tim
-                                FROM lahan A, desa B, kecamatan C, kabupaten D, provinsi E, gambar_lahan F
-                                WHERE A.desa=B.id
-                                AND B.kecamatan_id=C.id
-                                AND C.kabupaten_id=D.id
-                                AND D.provinsi_id=E.id
-                                AND A.id=F.lahan_id
-                                AND A.id='".$request->id_lahan."'"));
+                                FROM lahan A LEFT JOIN desa B ON A.desa=B.id 
+                                LEFT JOIN kecamatan C ON B.kecamatan_id=C.id 
+                                LEFT JOIN kabupaten D ON C.kabupaten_id=D.id
+                                LEFT JOIN provinsi E on D.provinsi_id=E.id 
+                                LEFT JOIN gambar_lahan F ON A.id=F.lahan_id
+                                WHERE 
+                                A.id='".$request->id_lahan."'"));
         return json_encode(array('data'=>$userData));
     }
 
@@ -150,6 +171,48 @@ class LahanController extends Controller
         // dd($userData);
     }
 
+    public function confirm_lahan(Request $request){
+        $validation = Validator::make($request->all(), [
+            'id_lahan' => 'required',
+        ]);
+
+        if($validation->passes()){
+            $data = Lahan::where('id', $request->id_lahan)
+                            ->update(['status' => 'verified']);
+
+            return response()->json([
+                'status'     => 'success',
+                'message'   => 'Data Berhasil di Update',
+            ]);
+        }else{
+            return response()->json([
+                'status'     => 'error',
+                'message'   => $validation->errors()->all(),
+            ]);
+        }
+    }
+
+    public function delete_lahan(Request $request){
+        $validation = Validator::make($request->all(), [
+            'id_lahan' => 'required',
+        ]);
+
+        if($validation->passes()){
+            $data = Lahan::where('id', $request->id_lahan)
+                            ->delete();
+
+            return response()->json([
+                'status'     => 'success',
+                'message'   => 'Data Berhasil di Update',
+            ]);
+        }else{
+            return response()->json([
+                'status'     => 'error',
+                'message'   => $validation->errors()->all(),
+            ]);
+        }
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -189,8 +252,7 @@ class LahanController extends Controller
         ]);
        
 
-        if($validation->passes())
-        {
+        if($validation->passes()){
             $now = date('d-M-Y'); //Fomat Date and time
             $now = $request->date;
 
@@ -232,12 +294,10 @@ class LahanController extends Controller
 
             return response()->json([
                 'status'     => 'success',
-                'message'   => 'Data Have Been Saved',
+                'message'   => 'Data Berhasil di Simpan',
             ]);
  
-        }
-        else
-        {
+        }else{
             return response()->json([
                 'status'     => 'error',
                 'message'   => $validation->errors()->all(),
@@ -246,6 +306,8 @@ class LahanController extends Controller
 
         // dd($lahan);
     }
+
+    
 
     /**
      * Display the specified resource.

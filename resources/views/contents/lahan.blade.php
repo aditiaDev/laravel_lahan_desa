@@ -163,8 +163,8 @@
           <!-- /.card-body -->
           <div class="card-footer">
             <center>
-              <button type="submit" id="save_data" class="btn btn-info"><i class="fas fa-save"></i> SAVE</button>
-              <button type="button" id="reset" class="btn btn-default">CANCEL</button>
+              <button type="submit" id="save_data" class="btn btn-info"><i class="fas fa-save"></i> SIMPAN</button>
+              <button type="button" id="reset" class="btn btn-default">BATAL</button>
             </center>
           </div>
           <!-- /.card-footer -->
@@ -202,6 +202,10 @@
           'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
       }
     });
+
+    $("#reset").click(function(){
+      location.reload();
+    })
 
     $("#provinsi").select2({
         // minimumInputLength: 2,
@@ -380,7 +384,7 @@
         cache: false,
         contentType : false,
         success: function(data){
-          console.log(data)
+          // console.log(data)
           // alert(data.message);
           if(data.status == 'error'){
             alert(data.message);

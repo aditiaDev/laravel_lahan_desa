@@ -31,4 +31,7 @@ Route::get('/lahan/getdesadata', 'LahanController@getDesaData');
 Route::post('/lahan/savelahan', 'LahanController@store')->name('savelahan');
 Route::get('/lahan/getlahandata', 'LahanController@getlahandata')->name('getlahandata');
 Route::get('/lahan/getdetaillahandata', 'LahanController@getdetaillahandata')->name('getdetaillahandata');
-
+Route::post('/lahan/confirm_lahan', 'LahanController@confirm_lahan')->name('confirm_lahan');
+Route::post('/lahan/delete_lahan', 'LahanController@delete_lahan')->name('delete_lahan');
+Route::get('/data_user/getdatauser', 'UserController@getDataUser')->name('getdatauser');
+Route::post('/user/saveuser', 'UserController@saveuser')->name('saveuser');

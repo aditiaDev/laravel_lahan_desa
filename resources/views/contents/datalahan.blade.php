@@ -31,7 +31,7 @@
         </div>
         <div class="card-body">
           <div class="row">
-            <div class="col-3">
+            <div class="col-2">
               <div class="form-group">
                 <label>Provinsi</label>
                 <select name="provinsi2" id="provinsi2" class="form-control"></select>
@@ -59,8 +59,10 @@
                 </select>
               </div>
             </div>
-            <div class="col-1">
-                <button class="btn btn-sm btn-info" style="margin-top: 31px;">Show</button>
+            <div class="col-2">
+                <button class="btn btn-sm btn-info" style="margin-top: 31px;" id="show_data">Show</button>
+                <button class="btn btn-sm btn-default" style="margin-top: 31px;" id="download"><i class="fas fa-file-excel"></i> Excel</button>
+                {{-- <button class="btn btn-sm btn-default" style="margin-top: 31px;" id="print_pdf"><i class="fas fa-file-pdf"></i> Pdf</button> --}}
             </div>
           </div>
           <div class="row">
@@ -76,7 +78,7 @@
                       <th>Tampak Depan</th>
                       <th>Lebar Jalan</th>
                       {{-- <th>Jaringan Listrik</th> --}}
-                      <th></th>
+                      <th style="min-width: 90px;"></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -168,6 +170,8 @@
               </div>
             </div>
           </div>
+          <div class="row" id="tampil_file">
+          </div>
           <div class="row" id="tampil_gambar">
           </div>
           <div class="row">
@@ -204,6 +208,40 @@
           'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
       }
     });
+
+    $("#download").click(function(){
+      var form = document.createElement("form");
+      form.setAttribute("method", "get");
+      form.setAttribute("id", "hidden_form");
+      form.setAttribute("action", "{{ route('lahan_export') }}");
+
+      // setting form target to a window named 'formresult'
+      form.setAttribute("target", "_blank");
+
+      var hiddenField = document.createElement("input");              
+      hiddenField.setAttribute("name", "provinsi_id");
+      hiddenField.setAttribute("value", $("#provinsi2").val());
+      form.appendChild(hiddenField);
+
+      var hiddenField = document.createElement("input");              
+      hiddenField.setAttribute("name", "kabupaten_id");
+      hiddenField.setAttribute("value", $("#kabupaten2").val());
+      form.appendChild(hiddenField);
+
+      var hiddenField = document.createElement("input");              
+      hiddenField.setAttribute("name", "kecamatan_id");
+      hiddenField.setAttribute("value", $("#kecamatan2").val());
+      form.appendChild(hiddenField);
+
+      var hiddenField = document.createElement("input");              
+      hiddenField.setAttribute("name", "status");
+      hiddenField.setAttribute("value", $("#status").val());
+      form.appendChild(hiddenField);
+      document.body.appendChild(form);
+
+      form.submit();
+      $("#hidden_form").remove()
+    })
 
     $("#provinsi2").select2({
         // minimumInputLength: 2,
@@ -289,15 +327,45 @@
         }
     });
 
-    
-    $('#tb_data').DataTable({
+    $("#show_data").click(function(){
+      REFRESH_TABLE()
+    })
 
+    
+    
+
+  });
+
+  function REFRESH_TABLE(){
+      if($("#provinsi2").val() == null){
+        $provinsi_id = "";
+      }else{
+        $provinsi_id = $("#provinsi2").val();
+      }
+
+      if($("#kabupaten2").val() == null){
+        $kabupaten_id = "";
+      }else{
+        $kabupaten_id = $("#kabupaten2").val();
+      }
+
+      if($("#kecamatan2").val() == null){
+        $kecamatan_id = "";
+      }else{
+        $kecamatan_id = $("#kecamatan2").val();
+      }
+
+      $('#tb_data').DataTable().destroy();
+      $('#tb_data').DataTable({
         ajax: {
-          url: SITEURL+"/api/lahan/getlahandata",
+          url: "{{ route('getlahandata') }}",
           type: 'GET',
-          // data:{
-          //   _token: $('meta[name="csrf-token"]').attr('content')
-          // }
+          data:{
+            provinsi_id: $provinsi_id,
+            kabupaten_id: $kabupaten_id,
+            kecamatan_id: $kecamatan_id,
+            status: $("#status").val(),
+          }
         },
         columns: [
                 {data: 'provinsi', name: 'provinsi', orderable: true, searchable: true},
@@ -312,19 +380,18 @@
                   "render" : function(data){
                     if(data.status == 'verified') {
                       return '<button type="button" onclick="show_detail('+data.id+')" class="btn btn-info btn-sm"><i class="fas fa-search-plus"></i></button> '+
-                              ' <button type="button" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>'
+                              ' <button type="button" class="btn btn-danger btn-sm" onclick="delete_lahan(\''+data.id+'\')"><i class="fas fa-trash"></i></button>'
                     }else{
                       return '<button type="button" onclick="show_detail('+data.id+')" class="btn btn-info btn-sm"><i class="fas fa-search-plus"></i></button> '+
-                              ' <button type="button" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button> '+
-                              ' <button type="button" class="btn btn-warning btn-sm"><i class="fas fa-check"></i></button> '
+                              ' <button type="button" class="btn btn-danger btn-sm" onclick="delete_lahan(\''+data.id+'\')"><i class="fas fa-trash"></i></button> '+
+                              ' <button type="button" class="btn btn-warning btn-sm" id="chk_'+data.id+'" onclick="confirmation(\''+data.id+'\')"><i class="fas fa-check"></i></button> '
                     }
                   }
                 },
               ],
         order: [[0, 'asc']]
-    });
-
-  });
+      });
+    }
 
   function show_detail(id){
     $.ajax({
@@ -356,7 +423,8 @@
 
         $("#tampil_gambar").html('')
         $.each(data, function(index,array){
-          console.log(array['photo'])
+          // console.log(array['photo'])
+          $("#tampil_file").append('<div class="col-6"><div class="form-group"><a href="{{ URL::to('/') }}/images/'+array['photo']+'" target="_blank" class="btn btn-sm btn-warning">Download</a></div></div>')
           $("#tampil_gambar").append('<div class="col-6"><div class="form-group"><img src="{{ URL::to('/') }}/images/'+array['photo']+'" alt="" style="width:100%"></div></div>')
         })
         
@@ -383,6 +451,47 @@
     //   },1000)
 
     // }
+  }
+
+  function confirmation(id){
+    $.ajax({
+      url: "{{ route('confirm_lahan') }}",
+      type: 'POST',
+      data: {
+        id_lahan: id
+      },
+      success: function(data){
+        // console.log(data)
+        if(data.status == 'error'){
+          alert(data.message);
+        }else{
+          alert(data.message);
+          REFRESH_TABLE();
+        }
+      }
+    })
+  }
+
+  function delete_lahan(id){
+    if (confirm('Delete this data?')) {
+      $.ajax({
+        url: "{{ route('delete_lahan') }}",
+        type: 'POST',
+        data: {
+          id_lahan: id
+        },
+        success: function(data){
+          // console.log(data)
+          if(data.status == 'error'){
+            alert(data.message);
+          }else{
+            alert(data.message);
+            REFRESH_TABLE();
+          }
+        }
+      })
+    } 
+    
   }
 
   function formatCurrency(angka, prefix) {
